@@ -7,13 +7,10 @@ class Kele
   def initialize(email, password)
     response = self.class.post('/sessions', body: { "email": email, "password": password })
 
-    if @auth == nil
-      'Invalid Credentials'
+    if response['auth_token'].nil?
+      puts 'Invalid Credentials'
     else
-      'Welcome'
+      @auth = response['auth_token']
     end
-
-    @auth = response['auth_token']
-
   end
 end
