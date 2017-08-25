@@ -5,7 +5,7 @@
    s.summary       = 'Kele API Client'
    s.description   = 'A client for the Bloc API'
    s.authors       = ['Ray Santiago']
-   s.email         = 'illuzionsmurf@gmail.com'
+   s.email         = 'rsantiago1186@gmail.com'
    s.files         = ['lib/kele.rb']
    s.require_paths = ["lib"]
    s.homepage      =
