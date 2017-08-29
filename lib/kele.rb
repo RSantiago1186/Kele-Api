@@ -1,30 +1,36 @@
 require 'httparty'
 require 'json'
+require './lib/roadmap'
 
 class Kele
   include HTTParty
-  @base_uri  ='https://www.bloc.io/api/v1'
+  include Roadmap
+
+  base_uri 'https://www.bloc.io/api/v1'
 
   def initialize(email, password)
-    response = self.class.post("#{@base_uri}/sessions", body: { "email": email, "password": password })
-
-    if response['auth_token'].nil?
-      puts 'Invalid Credentials'
-    else
-      @auth = response['auth_token']
-    end
+    post_response = self.class.post('/sessions', body: {
+        email: email,
+        password: password
+      })
+    @user_auth_token = post_response['auth_token']
+    raise "Invalid Email or Password. Try Again." if @user_auth_token.nil?
   end
-  
+
   def get_me
-    response = self.class.get("#{@base_uri}/users/me", headers: { "authorization" => @auth })
+    response = self.class.get('/users/me', headers: { "authorization" => @user_auth_token })
     JSON.parse(response.body)
   end
 
-  def get_mentor_availability
-      @mentor_id = 99
-      response = self.class.get("#{@base_uri}/mentors/99/student_availability", headers: { "authorization" => @auth })
-      JSON.parse(response.body)
+  def get_mentor_availability(mentor_id)
+      response = self.class.get("/mentors/#{mentor_id}/student_availability", headers: { "authorization" => @user_auth_token })
+      open = []
+      JSON.parse(response.body).each do |availability|
+        if availability["booked"] == nil
+          open << availability
+        end
+      end
+      open
   end
-
 
 end
